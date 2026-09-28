@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>我的博客</title>
+    <title>文章 · 我的博客</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,6 +12,13 @@
     />
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✍️</text></svg>" />
+    <!-- Markdown 渲染 + 代码高亮 (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/base16/gruvbox-light-soft.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
   </head>
   <body>
     <header class="site-header">
@@ -31,19 +38,12 @@
     </header>
 
     <main class="container">
-      <section class="hero">
-        <div class="search-box">
-          <input type="text" id="search-input" placeholder="搜索文章标题或内容…" autocomplete="off" />
-        </div>
-        <div class="tag-bar" id="tag-bar"></div>
-      </section>
-
-      <section class="posts-grid" id="posts-grid">
+      <article class="article" id="article-content">
         <div class="loading">
           <div class="spinner"></div>
           <p>加载文章中…</p>
         </div>
-      </section>
+      </article>
     </main>
 
     <footer class="site-footer">
@@ -55,7 +55,7 @@
     <script src="config.js"></script>
     <script src="app.js"></script>
     <script>
-      initHome();
+      initPost();
     </script>
   </body>
 </html>

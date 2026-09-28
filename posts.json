@@ -1,0 +1,19 @@
+[
+  {
+    "slug": "welcome",
+    "title": "欢迎使用这个博客框架",
+    "date": "2026-09-28",
+    "excerpt": "这是一个纯静态、支持 Markdown 的博客框架,可以直接部署到 GitHub Pages。本文介绍如何添加文章。",
+    "tags": ["教程", "开始"],
+    "cover": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    "slug": "markdown-guide",
+    "title": "Markdown 语法速览",
+    "date": "2026-09-27",
+    "excerpt": "常用的 Markdown 语法示例,包括标题、列表、代码块、表格、图片和链接等。",
+    "tags": ["Markdown", "教程"],
+    "cover": "",
+    "pinned": true
+  }
+]
