@@ -1,30 +1,35 @@
-/* ===== 老报纸主题 ===== */
+/* ===== 老报纸主题 =====
+   设计语言:泛黄旧纸 + 深棕墨迹 + 报纸红点缀,正文字体走衬线。
+   所有颜色/尺寸用 CSS 变量定义,深色主题在 [data-theme="dark"] 里覆盖同名变量。
+   JS 通过 setTheme() 切换 data-theme 属性,不需要 JS 操作具体颜色。 */
 :root {
-  /* 泛黄旧纸色 */
-  --bg: #e7ddc6;
-  --paper: #f4ecd8;
-  --bg-card: #f7f1e1;
-  --bg-code: #ece3ce;
-  /* 深棕墨迹 */
-  --text: #2b2117;
-  --text-muted: #6b5d47;
-  --border: #bfae8e;
-  --ink: #1a140d;
+  /* —— 纸面色(浅)—— */
+  --bg: #e7ddc6; /* 页面底 */
+  --paper: #f4ecd8; /* 报头/卡片纸面 */
+  --bg-card: #f7f1e1; /* 卡片背景 */
+  --bg-code: #ece3ce; /* 代码块底 */
+  /* —— 墨色(浅)—— */
+  --text: #2b2117; /* 正文 */
+  --text-muted: #6b5d47; /* 次要文字(日期/摘要) */
+  --border: #bfae8e; /* 细分隔线 */
+  --ink: #1a140d; /* 标题/重点 */
   --accent: #8a2b1e; /* 报纸红点缀(印章/重点) */
-  --accent-soft: #e9d9c2;
+  --accent-soft: #e9d9c2; /* 强调色的浅底(hover 等) */
   --rule: #2b2117; /* 分隔粗线 */
   --shadow: 0 1px 0 rgba(43, 33, 23, 0.08);
   --shadow-hover: 0 2px 0 rgba(43, 33, 23, 0.14);
   --radius: 2px;
   --max-width: 1000px;
+  /* 衬线字体栈:中文优先 Noto Serif SC,退到宋体;西文走 Georgia/Times */
   --serif: "Noto Serif SC", "Songti SC", "SimSun", "STSong", Georgia,
     "Times New Roman", serif;
   --serif-en: Georgia, "Times New Roman", "Noto Serif SC", serif;
+  /* 背景遮罩透明度,由 app.js 的 applyBackground() 写入;仅背景图模式生效 */
   --bg-overlay: 0.85;
 }
 
 [data-theme="dark"] {
-  /* 夜读:做旧的暗褐纸 */
+  /* 夜读:做旧的暗褐纸(覆盖同名变量,不改其它规则) */
   --bg: #211b13;
   --paper: #2a2318;
   --bg-card: #2c2519;
@@ -57,7 +62,7 @@ body {
   color: var(--text);
   line-height: 1.75;
   transition: background 0.3s ease, color 0.3s ease;
-  /* 纸张纤维纹理 */
+  /* 纸张纤维纹理:两层极淡的横/竖重复渐变叠加,模拟旧纸纹 */
   background-image: repeating-linear-gradient(
       0deg,
       rgba(43, 33, 23, 0.015) 0px,
@@ -85,22 +90,26 @@ a:hover {
   text-underline-offset: 3px;
 }
 
+/* 页面主容器:居中 + 限宽 */
 .container {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 28px;
 }
 
-/* ===== 背景图片层(可选)===== */
+/* ===== 背景图片层(可选)=====
+   仅当 config.js 配了 background 时,app.js 会创建 #bg-layer 并给 body 加 .has-bg。
+   未配背景图时整个层不存在,body 显示上面的纸张纹理。 */
 #bg-layer {
   position: fixed;
   inset: 0;
-  z-index: -2;
+  z-index: -2; /* 贴在内容之下 */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
+/* 背景图上方的半透明遮罩,保证文字清晰;遮罩浓度由 --bg-overlay 控制 */
 #bg-layer::after {
   content: "";
   position: absolute;
@@ -112,6 +121,7 @@ a:hover {
   background: rgba(33, 27, 19, var(--bg-overlay));
 }
 
+/* 启用背景图模式时,让 body 透出来露出 #bg-layer */
 body.has-bg {
   background-color: transparent;
 }
@@ -198,6 +208,7 @@ body.has-bg {
   text-decoration: none;
 }
 
+/* 主题切换按钮:按钮内的 ☀️/🌙 文字由 app.js 的 setTheme() 设置 */
 .theme-toggle {
   width: 40px;
   height: 40px;
@@ -225,6 +236,7 @@ body.has-bg {
   border-bottom: 1px solid var(--border);
 }
 
+/* 搜索框:相对定位,左侧 ::before 放大镜图标 */
 .search-box {
   margin: 4px auto 0;
   max-width: 420px;
@@ -233,6 +245,7 @@ body.has-bg {
 
 .search-box input {
   width: 100%;
+  /* 左 padding 38px 给左侧放大镜图标留位 */
   padding: 9px 14px 9px 38px;
   font-size: 0.92rem;
   font-family: var(--serif);
@@ -248,6 +261,7 @@ body.has-bg {
   border-color: var(--accent);
 }
 
+/* 放大镜图标:绝对定位贴左侧居中 */
 .search-box::before {
   content: "🔍";
   position: absolute;
@@ -258,7 +272,9 @@ body.has-bg {
   font-size: 0.85rem;
 }
 
-/* ===== 标签(栏目分类)===== */
+/* ===== 标签(栏目分类)=====
+   报纸风栏目条:各标签之间用竖线分隔(由每个 chip 的 border-right 实现)。
+   active 状态由 app.js 的 renderTags() 切换,用加粗+下划线表示当前选中。 */
 .tag-bar {
   display: flex;
   flex-wrap: wrap;
@@ -296,7 +312,10 @@ body.has-bg {
   text-decoration-thickness: 2px;
 }
 
-/* ===== 文章列表(报纸分栏)===== */
+/* ===== 文章列表(报纸分栏)=====
+   用 grid 模拟报纸版面的多栏排版,卡片之间用细竖线分隔。
+   断点控制每行列数:620px→2 列,920px→3 列,默认 mobile 单列。
+   分栏竖线靠给非首列卡片加 border-left 实现。 */
 .posts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -318,10 +337,11 @@ body.has-bg {
   position: relative;
 }
 
-/* 分栏竖线 */
+/* 分栏竖线:auto-fill 下非首列卡片加左竖线 */
 .posts-grid .post-card:not(:nth-child(1)) {
   border-left: 1px solid var(--border);
 }
+/* 2 列:奇数位(每行第1个)回到无左竖线 */
 @media (min-width: 620px) {
   .posts-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -330,6 +350,7 @@ body.has-bg {
     border-left: none;
   }
 }
+/* 3 列:每行第1个(3n+1)回到无左竖线 */
 @media (min-width: 920px) {
   .posts-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -372,6 +393,7 @@ body.has-bg {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* 灰度+棕褐滤镜,统一所有封面为做旧报纸插图风 */
   filter: grayscale(0.6) sepia(0.3) contrast(1.05);
 }
 
@@ -382,6 +404,7 @@ body.has-bg {
   overflow: hidden;
 }
 
+/* 占位卡的底纹:横向密集线条,模拟旧纸印刷 */
 .card-cover-empty::before {
   content: "";
   position: absolute;
@@ -405,7 +428,7 @@ body.has-bg {
   filter: none;
 }
 
-/* 文章页顶部封面 */
+/* 文章页顶部封面(独立于卡片封面,尺寸更大) */
 .article-cover {
   margin: 0 0 34px;
   border: 1px solid var(--rule);
@@ -475,11 +498,11 @@ body.has-bg {
   line-height: 1.7;
   text-align: justify;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 4; /* 最多显示 4 行 */
   -webkit-box-orient: vertical;
   overflow: hidden;
   flex: 1;
-  /* 首行缩进,报纸正文感 */
+  /* 仅卡片摘要保留首行缩进(报纸正文感);文章正文段落不再缩进 */
   text-indent: 2em;
 }
 
@@ -513,13 +536,15 @@ body.has-bg {
   grid-column: 1 / -1;
 }
 
-/* ===== 文章页 ===== */
+/* ===== 文章页 =====
+   正文区限宽 720px,长文阅读体验优于通栏。 */
 .article {
   padding: 40px 0 60px;
   max-width: 720px;
   margin: 0 auto;
 }
 
+/* 标题区:居中 + 双线下沿分隔 */
 .article-header {
   margin-bottom: 32px;
   padding-bottom: 20px;
@@ -527,6 +552,7 @@ body.has-bg {
   text-align: center;
 }
 
+/* 返回首页链接:左对齐、小字大写,体现"报头导航"感 */
 .back-link {
   display: inline-flex;
   align-items: center;
@@ -553,6 +579,7 @@ body.has-bg {
   letter-spacing: 0.01em;
 }
 
+/* 日期 + 标签行(由 app.js 在有 meta 时才渲染) */
 .article-meta {
   font-size: 0.8rem;
   color: var(--text-muted);
@@ -653,7 +680,9 @@ body.has-bg {
   text-align: left;
 }
 
-/* 关于页正文不需要首字下沉和段落缩进 */
+/* 防御性覆盖:关于页正文不继承文章页的首字下沉。
+   .about-bio 容器同时带 .markdown-body class,
+   若没有这段覆盖会命中下面的 .drop-cap 规则。 */
 .about-bio > p:first-of-type::first-letter {
   float: none;
   font-size: inherit;
@@ -663,19 +692,22 @@ body.has-bg {
   color: inherit;
 }
 
+/* 关于页正文不需要段落缩进 */
 .about-bio p {
   text-indent: 0;
 }
 
-/* ===== Markdown 正文(报纸正文排版)===== */
+/* ===== Markdown 正文(报纸正文排版)=====
+   同时服务文章页(.markdown-body)和关于页(.markdown-body.about-bio) */
 .markdown-body {
   font-size: 1.06rem;
   font-family: var(--serif);
   text-align: justify;
 }
 
+/* 首字下沉:由 app.js 根据 config.js 的 dropCap 开关给容器加 .drop-cap 触发。
+   只作用于正文第一个直接子 <p> 的首字母。 */
 .markdown-body.drop-cap > p:first-of-type::first-letter {
-  /* 首字下沉(由 config.js 的 dropCap 开关控制) */
   float: left;
   font-size: 3.4rem;
   line-height: 0.8;
@@ -684,6 +716,7 @@ body.has-bg {
   color: var(--accent);
 }
 
+/* 标题:h2 加下划线分隔,模拟报纸小节标题 */
 .markdown-body h1,
 .markdown-body h2,
 .markdown-body h3,
@@ -707,9 +740,9 @@ body.has-bg {
   font-size: 1.2rem;
 }
 
+/* 正文段落:仅用段间距分隔,不做首行缩进(2026-09-28 调整) */
 .markdown-body p {
   margin: 1em 0;
-  text-indent: 2em;
 }
 
 .markdown-body ul,
@@ -722,20 +755,20 @@ body.has-bg {
   margin: 0.4em 0;
 }
 
+/* 引用块:左侧粗线 + 灰字斜体,模拟报纸引文 */
 .markdown-body blockquote {
   margin: 1.3em 0;
   padding: 0.4em 1.4em;
   border-left: 3px solid var(--rule);
   color: var(--text-muted);
   font-style: italic;
-  text-indent: 0;
 }
 
 .markdown-body blockquote p {
   margin: 0.4em 0;
-  text-indent: 0;
 }
 
+/* 行内代码:虚边小药丸,monospace 字体 */
 .markdown-body code {
   font-family: "Courier New", "Consolas", monospace;
   font-size: 0.88em;
@@ -745,6 +778,7 @@ body.has-bg {
   border-radius: 0;
 }
 
+/* 代码块:滚动作溢出;text-indent:0 防止被父级任何缩进影响 */
 .markdown-body pre {
   margin: 1.3em 0;
   padding: 16px 18px;
@@ -755,6 +789,7 @@ body.has-bg {
   text-indent: 0;
 }
 
+/* 代码块内的 <code>:撤销行内代码的边框/底色 */
 .markdown-body pre code {
   background: none;
   border: none;
@@ -763,6 +798,7 @@ body.has-bg {
   line-height: 1.6;
 }
 
+/* 表格:全框线、表头加深底色 */
 .markdown-body table {
   width: 100%;
   border-collapse: collapse;
@@ -782,6 +818,7 @@ body.has-bg {
   font-weight: 700;
 }
 
+/* 正文图片:加边框+纸色衬底+做旧滤镜,统一为报纸插图风 */
 .markdown-body img {
   max-width: 100%;
   border: 1px solid var(--rule);
@@ -791,6 +828,7 @@ body.has-bg {
   filter: grayscale(0.5) sepia(0.25) contrast(1.05);
 }
 
+/* 分隔线:横线中央叠一个 ❦ 花饰,背景色挖空遮住线 */
 .markdown-body hr {
   border: none;
   border-top: 1px solid var(--rule);
@@ -810,6 +848,7 @@ body.has-bg {
   color: var(--text-muted);
 }
 
+/* 正文链接:红色文字 + 红色下边线,hover 加浅红底 */
 .markdown-body a {
   color: var(--accent);
   border-bottom: 1px solid var(--accent);
@@ -835,7 +874,8 @@ body.has-bg {
   color: var(--text-muted);
 }
 
-/* ===== 加载态 ===== */
+/* ===== 加载态 =====
+   grid-column: 1 / -1 让加载/空状态横跨整个 grid,不被卡片挤压 */
 .loading {
   text-align: center;
   padding: 60px 20px;
@@ -844,6 +884,7 @@ body.has-bg {
   grid-column: 1 / -1;
 }
 
+/* 旋转加载圈:只染顶部一条边,形成"转圈"视觉 */
 .spinner {
   width: 30px;
   height: 30px;
@@ -860,7 +901,9 @@ body.has-bg {
   }
 }
 
-/* ===== 响应式 ===== */
+/* ===== 响应式 =====
+   小屏(<600px):缩小标题字体、列表强制单列并去掉分栏竖线。
+   !important 用于覆盖上面的 min-width 媒体查询(它们针对更宽屏生效)。 */
 @media (max-width: 600px) {
   .brand .title {
     font-size: 1.8rem;
